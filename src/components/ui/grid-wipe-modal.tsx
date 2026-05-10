@@ -1,7 +1,7 @@
 "use client";
 
 import { motion, AnimatePresence } from "framer-motion";
-import { useMemo, ReactNode } from "react";
+import { useMemo, ReactNode, useEffect } from "react";
 
 interface GridWipeModalProps {
   isOpen: boolean;
@@ -13,6 +13,17 @@ interface GridWipeModalProps {
 export function GridWipeModal({ isOpen, onClose, children, title = "Preview" }: GridWipeModalProps) {
   const cols = 16;
   const rows = 12;
+
+  // Lock scroll when modal is open
+  useEffect(() => {
+    if (isOpen) {
+      const originalStyle = window.getComputedStyle(document.body).overflow;
+      document.body.style.overflow = "hidden";
+      return () => {
+        document.body.style.overflow = originalStyle;
+      };
+    }
+  }, [isOpen]);
   
   const cells = useMemo(() => {
     const arr = [];
