@@ -1,4 +1,5 @@
 import type { MetadataRoute } from "next";
+export const dynamic = "force-static";
 import { siteConfig } from "@/data/site";
 import { blogPosts } from "@/data/blog-posts";
 
