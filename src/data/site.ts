@@ -2,7 +2,7 @@ export const siteConfig = {
   name: "Sid",
   title: "Sid — Developer & Builder",
   description:
-    "Full-stack developer passionate about building clean, performant web experiences.",
+    "I build fast, polished, and intuitive web applications. My work focuses on bridging the gap between robust engineering and pixel-perfect design.",
   url: "https://sid20007.me",
   links: {
     github: "https://github.com/sid20007",

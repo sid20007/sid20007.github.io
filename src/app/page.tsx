@@ -59,7 +59,7 @@ export default function Home() {
             ]}
           />
         ) : (
-          /* CSS-only fallback for mobile — lightweight static dots */
+          /* CSS-only fallback for mobile lightweight static dots */
           <div
             className="absolute inset-0"
             style={{
@@ -92,10 +92,13 @@ export default function Home() {
           transition={{ duration: 0.6, ease: [0.25, 0.1, 0.25, 1] }}
           className="flex flex-col items-center text-center"
         >
-          <h1 className="text-4xl sm:text-5xl font-semibold tracking-tight text-[#e4e4e7]">
+          <h1 className="text-5xl sm:text-6xl font-semibold tracking-tight text-white mb-2 sm:mb-3">
             Siddharth.
           </h1>
-          <p className="mt-2 max-w-lg text-base sm:text-lg text-[#a1a1aa] leading-relaxed text-balance px-4">
+          <h2 className="text-lg sm:text-xl font-medium text-[#e4e4e7] mb-6 sm:mb-8 tracking-tight">
+            Full-Stack Engineer & UI Builder
+          </h2>
+          <p className="max-w-xl text-base sm:text-[1.125rem] text-[#a1a1aa] leading-relaxed text-balance px-4">
             {siteConfig.description}
           </p>
         </motion.div>
