@@ -2,10 +2,11 @@
 
 import Link from "next/link";
 import { useState } from "react";
-import { motion } from "framer-motion";
+import { motion, AnimatePresence } from "framer-motion";
 import type { Project } from "@/data/projects";
 import { EditTool } from "@/components/ui/edit-tool";
 import { GridWipeModal } from "@/components/ui/grid-wipe-modal";
+import { techExplanations } from "@/data/tech-explanations";
 
 export default function ProjectCard({
   project,
@@ -17,6 +18,7 @@ export default function ProjectCard({
   const [showPreview, setShowPreview] = useState(false);
   const [previewState, setPreviewState] = useState<"waiting" | "pending" | "completed">("waiting");
   const [readmeContent, setReadmeContent] = useState("");
+  const [activeTag, setActiveTag] = useState<string | null>(null);
 
   const summarizeReadme = (text: string) => {
     const lines = text.split('\n');
@@ -77,9 +79,9 @@ export default function ProjectCard({
         viewport={{ once: true, margin: "-50px" }}
         transition={{ duration: 0.5, delay: index * 0.1 }}
         whileHover={{ y: -8 }}
-        className="group relative rounded-3xl border border-white/[0.06] bg-[#111113]/60 backdrop-blur-sm p-6 sm:p-8 flex flex-col justify-between overflow-hidden cursor-default transition-all duration-500 hover:border-white/[0.15] hover:bg-white/[0.04] hover:shadow-[0_0_40px_rgba(255,255,255,0.03)]"
+        className="group relative rounded-3xl border border-white/[0.06] bg-surface/60 backdrop-blur-md p-6 sm:p-8 flex flex-col justify-between overflow-hidden cursor-default transition-all duration-500 hover:border-white/[0.12] hover:bg-white/[0.03] hover:shadow-[0_8px_30px_rgba(0,0,0,0.4)]"
       >
-        <div className="absolute inset-0 bg-gradient-to-br from-white/[0.05] via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
+        <div className="absolute inset-0 bg-gradient-to-br from-white/[0.04] via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
         
         <div className="relative z-10 min-w-0 flex-1">
           <div className="flex items-center justify-between mb-4">
@@ -97,14 +99,37 @@ export default function ProjectCard({
           </p>
           
           <div className="mt-6 flex flex-wrap items-center gap-2">
-            {project.tags.map((tag) => (
-              <span
-                key={tag}
-                className="rounded-full bg-white/[0.03] border border-white/[0.04] px-3 py-1 text-[10px] font-medium tracking-wider uppercase text-[#71717a] group-hover:text-[#a1a1aa] group-hover:border-white/[0.08] group-hover:bg-white/[0.06] transition-colors duration-300"
-              >
-                {tag}
-              </span>
-            ))}
+            {project.tags.map((tag) => {
+              const hasExplanation = !!techExplanations[tag];
+              return (
+                <button
+                  key={tag}
+                  onPointerEnter={(e) => {
+                    if (e.pointerType === "mouse" && hasExplanation) {
+                      setActiveTag(tag);
+                    }
+                  }}
+                  onPointerLeave={(e) => {
+                    if (e.pointerType === "mouse") {
+                      setActiveTag(null);
+                    }
+                  }}
+                  onClick={(e) => {
+                    if (hasExplanation) {
+                      e.stopPropagation();
+                      setActiveTag(activeTag === tag ? null : tag);
+                    }
+                  }}
+                  className={`rounded-full border px-3 py-1 text-[10px] font-medium tracking-wider uppercase transition-all duration-300 cursor-help ${
+                    activeTag === tag
+                      ? "bg-[#e4e4e7] text-[#0a0a0b] border-[#e4e4e7]"
+                      : "bg-white/[0.03] border-white/[0.04] text-[#71717a] hover:text-[#e4e4e7] hover:border-white/[0.12] hover:bg-white/[0.06]"
+                  }`}
+                >
+                  {tag}
+                </button>
+              );
+            })}
           </div>
         </div>
 
@@ -143,7 +168,49 @@ export default function ProjectCard({
               View Live <svg className="w-3 h-3" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}><path strokeLinecap="round" strokeLinejoin="round" d="M4.5 19.5l15-15m0 0H8.25m11.25 0v11.25" /></svg>
             </a>
           )}
+          {project.download && (
+            <a
+              href={project.download}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="flex items-center gap-1.5 text-[11px] font-medium tracking-wide uppercase text-[#0a0a0b] bg-white rounded-full px-3.5 py-1.5 hover:scale-105 hover:bg-[#e4e4e7] transition-all"
+            >
+              Download APK <svg className="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}><path strokeLinecap="round" strokeLinejoin="round" d="M3 16.5v2.25A2.25 2.25 0 005.25 21h13.5A2.25 2.25 0 0021 18.75V16.5M16.5 12L12 16.5m0 0L7.5 12m4.5 4.5V3" /></svg>
+            </a>
+          )}
         </div>
+
+        <AnimatePresence>
+          {activeTag && techExplanations[activeTag] && (
+            <motion.div
+              initial={{ opacity: 0, y: "100%" }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: "100%" }}
+              transition={{ type: "spring", damping: 25, stiffness: 200 }}
+              className="absolute inset-x-0 bottom-0 bg-[#0c0c0e]/95 backdrop-blur-md border-t border-white/[0.08] p-5 z-20 flex flex-col justify-center shadow-[0_-8px_24px_rgba(0,0,0,0.5)]"
+            >
+              <div className="flex items-center justify-between mb-1.5">
+                <span className="text-[10px] font-mono tracking-widest text-[#71717a] uppercase">
+                  {activeTag} — {techExplanations[activeTag].definition}
+                </span>
+                <button 
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    setActiveTag(null);
+                  }}
+                  className="text-[#71717a] hover:text-white transition-colors cursor-pointer"
+                >
+                  <svg className="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                    <path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" />
+                  </svg>
+                </button>
+              </div>
+              <p className="text-xs text-[#a1a1aa] leading-relaxed">
+                {techExplanations[activeTag].context}
+              </p>
+            </motion.div>
+          )}
+        </AnimatePresence>
       </motion.div>
 
       <GridWipeModal

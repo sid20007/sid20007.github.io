@@ -27,7 +27,7 @@ export default function SectionHeading({
         whileInView={{ opacity: 1, y: 0 }}
         viewport={{ once: true }}
         transition={{ duration: 0.4, delay: 0.05 }}
-        className="mt-2 text-2xl font-semibold tracking-tight text-[#e4e4e7]"
+        className="mt-2 text-2xl sm:text-3xl font-semibold tracking-tight text-white"
       >
         {title}
       </motion.h2>
@@ -37,7 +37,7 @@ export default function SectionHeading({
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
           transition={{ duration: 0.4, delay: 0.1 }}
-          className="mt-2.5 text-sm text-[#a1a1aa] leading-relaxed max-w-lg"
+          className="mt-3 text-[0.9375rem] text-[#a1a1aa] leading-relaxed max-w-lg"
         >
           {description}
         </motion.p>

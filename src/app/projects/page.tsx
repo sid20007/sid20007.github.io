@@ -98,7 +98,7 @@ export default function ProjectsPage() {
             delay: 0.2,
             ease: [0.25, 0.1, 0.25, 1],
           }}
-          className="text-3xl sm:text-4xl lg:text-5xl font-semibold tracking-tight text-[#e4e4e7] mb-4"
+          className="text-3xl sm:text-4xl lg:text-5xl font-semibold tracking-tight text-white mb-4"
         >
           Building in the open.
         </motion.h1>

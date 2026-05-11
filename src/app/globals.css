@@ -104,23 +104,47 @@ body::after {
 
 /* Twinkling stars animation */
 @keyframes twinkle {
-  0%, 100% { opacity: 0.3; }
-  50% { opacity: 0.7; }
+
+  0%,
+  100% {
+    opacity: 0.3;
+  }
+
+  50% {
+    opacity: 0.7;
+  }
 }
 
 @keyframes twinkle-slow {
-  0%, 100% { opacity: 0.2; }
-  50% { opacity: 0.5; }
+
+  0%,
+  100% {
+    opacity: 0.2;
+  }
+
+  50% {
+    opacity: 0.5;
+  }
 }
 
 @keyframes drift {
-  from { transform: translateY(0) translateX(0); }
-  to { transform: translateY(-30px) translateX(20px); }
+  from {
+    transform: translateY(0) translateX(0);
+  }
+
+  to {
+    transform: translateY(-30px) translateX(20px);
+  }
 }
 
 @keyframes drift-slow {
-  from { transform: translateY(0) translateX(0); }
-  to { transform: translateY(20px) translateX(-30px); }
+  from {
+    transform: translateY(0) translateX(0);
+  }
+
+  to {
+    transform: translateY(20px) translateX(-30px);
+  }
 }
 
 .stars-twinkle {

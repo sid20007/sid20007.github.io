@@ -4,6 +4,7 @@ export interface Project {
   tags: string[];
   github?: string;
   live?: string;
+  download?: string;
   featured: boolean;
 }
 
@@ -32,6 +33,7 @@ export const projects: Project[] = [
       "A native Android app that prevents unexpected data interruptions by proactively alerting users the moment their network drops from 5G to 4G/LTE.",
     tags: ["Kotlin", "Android", "Networking"],
     github: "https://github.com/sid20007/5G-Connection-Guard-by-sid",
+    download: "https://github.com/sid20007/5G-Connection-Guard-by-sid/releases/download/v2.0/5G-Guard-v2.apk",
     featured: false,
   },
 ];

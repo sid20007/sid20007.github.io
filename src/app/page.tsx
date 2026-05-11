@@ -59,7 +59,8 @@ export default function Home() {
             ]}
           />
         ) : (
-          /* CSS-only fallback for mobile lightweight static dots */
+          /*
+           CSS-only fallback for mobile lightweight static dots */
           <div
             className="absolute inset-0"
             style={{
@@ -174,15 +175,16 @@ export default function Home() {
         delay={0.1}
         className="py-20 sm:py-24 mx-auto max-w-6xl px-6 sm:px-8 lg:px-12"
       >
-        <div className="rounded-2xl border border-white/[0.08] bg-white/[0.03] backdrop-blur-md p-8 sm:p-10 text-center">
-          <h2 className="text-2xl font-semibold tracking-tight text-[#e4e4e7] text-balance">
+        <div className="relative overflow-hidden rounded-3xl border border-white/[0.08] bg-surface/80 backdrop-blur-md p-10 sm:p-14 text-center shadow-[0_8px_30px_rgba(0,0,0,0.4)]">
+          <div className="absolute inset-0 bg-gradient-to-b from-white/[0.04] to-transparent pointer-events-none" />
+          <h2 className="relative z-10 text-2xl sm:text-3xl font-semibold tracking-tight text-white text-balance">
             Let&apos;s build something.
           </h2>
-          <p className="mt-3 text-sm text-[#a1a1aa] max-w-md mx-auto leading-relaxed text-balance">
+          <p className="relative z-10 mt-4 text-sm sm:text-[0.9375rem] text-[#a1a1aa] max-w-md mx-auto leading-relaxed text-balance">
             I&apos;m always open to interesting conversations. Reach out if you
             want to collaborate or just say hello.
           </p>
-          <div className="mt-6 flex justify-center">
+          <div className="relative z-10 mt-8 flex justify-center">
             <ButtonWithIcon
               label="Get in touch"
               href={`https://mail.google.com/mail/?view=cm&fs=1&to=${siteConfig.links.email}`}
