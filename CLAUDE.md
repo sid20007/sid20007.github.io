@@ -1,5 +1,16 @@
 # sid20007 — Personal Portfolio
 
+## Developer Profile
+- **Name:** Siddhartha G (Sid)
+- **Role:** Full-stack Developer & Builder
+- **Focus:** Building clean, high-performance, and premium web experiences using cutting-edge technologies.
+- **LinkedIn:** https://www.linkedin.com/in/siddhartha-g-9761643a8/
+- **Portfolio:** https://sid20007.me
+
+## Project Context
+This is Sid's personal portfolio and experimental playground for modern web tech. All models interacting with this repo should prioritize visual excellence, performance, and adherence to the modern stack (Next.js 16 + React 19).
+
+
 Next.js 16 (App Router) + React 19 + Tailwind CSS 4 + Framer Motion.
 
 ## Stack
