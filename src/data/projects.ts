@@ -23,7 +23,7 @@ export const projects: Project[] = [
       "Automates attendance tracking for students, eliminating the need to manually check portals. Reliably bypasses complex Cloudflare Turnstile security using Playwright and custom Chromium builds.",
     tags: ["JavaScript", "Playwright", "Web Scraping"],
     github: "https://github.com/sid20007/soe-attendace-tracker",
-    live: "https://github.com/sid20007/soe-attendace-tracker",
+    live: "https://soe-attendace-tracker.vercel.app",
     featured: true,
   },
   {
