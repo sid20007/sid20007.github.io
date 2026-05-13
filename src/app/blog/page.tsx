@@ -8,8 +8,8 @@ import { motion } from "framer-motion";
 export default function BlogPage() {
   return (
     <div className="relative min-h-screen">
-      {/* Subtle, neutral dot grid background specific to the blog */}
-      <div 
+      {}
+      <div
         className="pointer-events-none fixed inset-0 z-0 opacity-40"
         style={{
           backgroundImage: `radial-gradient(rgba(255, 255, 255, 0.1) 1px, transparent 1px)`,
@@ -17,11 +17,11 @@ export default function BlogPage() {
         }}
         aria-hidden="true"
       />
-      
+
       <div className="relative z-10 mx-auto max-w-6xl px-6 sm:px-8 lg:px-12">
         <PageHeader
           title="Blog"
-          description="Thoughts on distributed systems, type systems, and the craft of software engineering."
+          description="Random stuff I write when I'm bored or figure something out."
         />
 
       <motion.div

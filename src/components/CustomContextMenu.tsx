@@ -12,22 +12,21 @@ export default function CustomContextMenu() {
   const router = useRouter();
 
   useEffect(() => {
-    // Disable on touch devices
+
     if (window.matchMedia("(pointer: coarse)").matches) return;
 
     const handleContextMenu = (e: MouseEvent) => {
       e.preventDefault();
-      
-      // Calculate position to ensure it doesn't go off-screen
+
       const menuWidth = 220;
-      const menuHeight = 280; // approximate height
-      
+      const menuHeight = 280;
+
       let x = e.clientX;
       let y = e.clientY;
-      
+
       if (x + menuWidth > window.innerWidth) x = window.innerWidth - menuWidth - 10;
       if (y + menuHeight > window.innerHeight) y = window.innerHeight - menuHeight - 10;
-      
+
       setPosition({ x, y });
       setIsVisible(true);
     };
@@ -51,7 +50,6 @@ export default function CustomContextMenu() {
     };
   }, [isVisible]);
 
-  // Prevent hydration errors by not rendering on server
   if (typeof window === "undefined") return null;
 
   const actions = [

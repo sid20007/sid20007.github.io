@@ -13,7 +13,7 @@ interface ButtonWithIconProps {
 
 const ButtonWithIcon = ({ label = "Let's Collaborate", onClick, href, target, rel }: ButtonWithIconProps) => {
   const isLink = !!href;
-  
+
   const className = "relative z-50 pointer-events-auto inline-flex items-center justify-center text-sm font-medium rounded-full h-12 p-1 ps-6 pe-14 group transition-all duration-500 hover:ps-14 hover:pe-6 w-fit overflow-hidden cursor-pointer bg-white text-black hover:bg-white/90";
 
   const content = (

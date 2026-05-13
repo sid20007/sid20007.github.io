@@ -1,8 +1,8 @@
 export const siteConfig = {
   name: "Sid",
-  title: "Sid — Developer & Builder",
+  title: "Sid — Building cool stuff",
   description:
-    "I build fast, polished, and intuitive web applications. My work focuses on bridging the gap between robust engineering and pixel-perfect design.",
+    "Just a dev who likes building things that actually work. Mostly frontend experiments and random side projects. Currently figuring out how not to break production.",
   url: "https://sid20007.me",
   links: {
     github: "https://github.com/sid20007",

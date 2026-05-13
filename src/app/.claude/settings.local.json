@@ -1,0 +1,10 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(npm run *)",
+      "Bash(cd \"\\\\\\\\wsl.localhost\\\\Ubuntu\\\\home\\\\sid\\\\projects\\\\sid20007\")",
+      "Bash(cd /home/sid/projects/sid20007 && npm run dev 2>&1 | head -30)",
+      "Read(///wsl.localhost/Ubuntu/home/sid/projects/**)"
+    ]
+  }
+}

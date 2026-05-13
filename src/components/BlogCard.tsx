@@ -28,7 +28,7 @@ export default function BlogCard({ post }: { post: BlogPost }) {
           {post.description}
         </p>
       </Link>
-      
+
       <div className="mt-4 flex flex-wrap items-center gap-2">
         {post.tags.map((tag) => {
           const hasExplanation = !!techExplanations[tag];

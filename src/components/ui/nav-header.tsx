@@ -3,7 +3,7 @@
 import React, { useRef, useState } from "react";
 import { motion } from "framer-motion";
 import Link from "next/link";
-import { usePathname } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 
 interface NavHeaderProps {
   links: { href: string; label: string }[];
@@ -46,6 +46,8 @@ const Tab = ({
   isActive: boolean;
 }) => {
   const ref = useRef<HTMLLIElement>(null);
+  const router = useRouter();
+
   return (
     <li
       ref={ref}
@@ -57,6 +59,8 @@ const Tab = ({
           opacity: 1,
           left: ref.current.offsetLeft,
         });
+
+        router.prefetch(href);
       }}
       className="relative z-10 block cursor-pointer"
     >

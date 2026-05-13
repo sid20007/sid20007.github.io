@@ -7,7 +7,7 @@ import { CosmicSpectrum } from "@/components/ui/cosmos-spectrum";
 export default function ContactPage() {
   return (
     <div className="relative min-h-screen">
-      {/* ── Hero: Big email CTA ── */}
+      {}
       <section className="relative z-10 flex flex-col items-center justify-center pt-32 pb-20 sm:pt-40 sm:pb-28 px-6">
         <motion.div
           initial={{ opacity: 0, y: 24 }}
@@ -26,7 +26,7 @@ export default function ContactPage() {
           </p>
         </motion.div>
 
-        {/* Big clickable email */}
+        {}
         <a
           href={`https://mail.google.com/mail/?view=cm&fs=1&to=${siteConfig.links.email}`}
           target="_blank"
@@ -48,7 +48,7 @@ export default function ContactPage() {
         </a>
       </section>
 
-      {/* ── Info cards ── */}
+      {}
       <motion.div
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
@@ -56,7 +56,7 @@ export default function ContactPage() {
         className="relative z-10 mx-auto max-w-2xl px-6 sm:px-8 pb-32"
       >
         <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
-          {/* Availability */}
+          {}
           <div className="rounded-2xl border border-white/[0.06] bg-[#111113]/60 backdrop-blur-sm p-6 text-center">
             <div className="mx-auto mb-3 flex h-8 w-8 items-center justify-center">
               <span className="relative flex h-3 w-3">
@@ -70,7 +70,7 @@ export default function ContactPage() {
             <p className="text-sm text-[#e4e4e7]">Available for work</p>
           </div>
 
-          {/* Response time */}
+          {}
           <div className="rounded-2xl border border-white/[0.06] bg-[#111113]/60 backdrop-blur-sm p-6 text-center">
             <div className="mx-auto mb-3 flex h-8 w-8 items-center justify-center text-[#a1a1aa]">
               <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
@@ -83,7 +83,7 @@ export default function ContactPage() {
             <p className="text-sm text-[#e4e4e7]">Within 24 hours</p>
           </div>
 
-          {/* Location */}
+          {}
           <div className="rounded-2xl border border-white/[0.06] bg-[#111113]/60 backdrop-blur-sm p-6 text-center">
             <div className="mx-auto mb-3 flex h-8 w-8 items-center justify-center text-[#a1a1aa]">
               <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
@@ -98,7 +98,7 @@ export default function ContactPage() {
           </div>
         </div>
 
-        {/* Socials */}
+        {}
         <div className="mt-8 flex items-center justify-center gap-5">
           {siteConfig.links.github && (
             <a
@@ -125,7 +125,7 @@ export default function ContactPage() {
         </div>
       </motion.div>
 
-      {/* Cosmic Spectrum background */}
+      {}
       <CosmicSpectrum color="blue-black" blur />
     </div>
   );

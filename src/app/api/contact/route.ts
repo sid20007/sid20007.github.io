@@ -26,7 +26,6 @@ export async function POST(request: Request) {
       );
     }
 
-    // Log to console — replace with your email/webhook integration.
     console.log("Contact form submission:", { name, email, message });
 
     return NextResponse.json({ success: true });

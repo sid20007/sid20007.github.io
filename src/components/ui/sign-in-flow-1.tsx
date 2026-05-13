@@ -1,8 +1,6 @@
 "use client";
 
-import React, { useState, useMemo, useRef, useEffect } from "react";
-import { motion, AnimatePresence } from "framer-motion";
-import Link from "next/link";
+import React, { useMemo, useRef } from "react";
 import { cn } from "@/lib/utils";
 import { Canvas, useFrame, useThree } from "@react-three/fiber";
 
@@ -26,10 +24,6 @@ interface ShaderProps {
   maxFps?: number;
 }
 
-interface SignInPageProps {
-  className?: string;
-}
-      
 export const CanvasRevealEffect = ({
   animationSpeed = 10,
   opacities = [0.3, 0.3, 0.3, 0.5, 0.5, 0.5, 0.8, 0.8, 0.8, 1],
@@ -88,6 +82,13 @@ const DotMatrix: React.FC<DotMatrixProps> = ({
   center = ["x", "y"],
 }) => {
   const uniforms = React.useMemo(() => {
+
+    let speedFactor = 0.5;
+    const speedMatch = shader.match(/animation_speed_factor_([0-9.]+)_/);
+    if (speedMatch && speedMatch[1]) {
+      speedFactor = parseFloat(speedMatch[1]) / 20.0;
+    }
+
     let colorsArray = [
       colors[0],
       colors[0],
@@ -140,6 +141,10 @@ const DotMatrix: React.FC<DotMatrixProps> = ({
         value: shader.includes("u_reverse_active") ? 1 : 0,
         type: "uniform1i",
       },
+      u_speed_factor: {
+        value: speedFactor,
+        type: "uniform1f",
+      },
     };
   }, [colors, opacities, totalSize, dotSize, shader]);
 
@@ -156,6 +161,7 @@ const DotMatrix: React.FC<DotMatrixProps> = ({
         uniform float u_dot_size;
         uniform vec2 u_resolution;
         uniform int u_reverse;
+        uniform float u_speed_factor;
 
         out vec4 fragColor;
 
@@ -194,7 +200,7 @@ const DotMatrix: React.FC<DotMatrixProps> = ({
 
             vec3 color = u_colors[int(show_offset * 6.0)];
 
-            float animation_speed_factor = 0.5;
+            float animation_speed_factor = u_speed_factor;
             vec2 center_grid = u_resolution / 2.0 / u_total_size;
             float dist_from_center = distance(center_grid, st2);
 
@@ -223,7 +229,6 @@ const DotMatrix: React.FC<DotMatrixProps> = ({
   );
 };
 
-
 const ShaderMaterial = ({
   source,
   uniforms,
@@ -236,13 +241,16 @@ const ShaderMaterial = ({
 }) => {
   const { size } = useThree();
   const ref = useRef<THREE.Mesh>(null);
-  let lastFrameTime = 0;
+  const lastFrameTime = useRef(0);
 
   useFrame(({ clock }) => {
     if (!ref.current) return;
     const timestamp = clock.getElapsedTime();
 
-    lastFrameTime = timestamp;
+    if (timestamp - lastFrameTime.current < 1 / maxFps) {
+      return;
+    }
+    lastFrameTime.current = timestamp;
 
     const material: any = ref.current.material;
     const timeLocation = material.uniforms.u_time;

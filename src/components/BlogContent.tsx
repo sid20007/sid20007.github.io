@@ -1,5 +1,6 @@
 import type { BlogBlock } from "@/data/blog-posts";
-import { EditTool } from "@/components/ui/edit-tool";
+import { Terminal } from "@/registry/magicui/terminal";
+import { TerminalDemo2 } from "@/components/TerminalDemo2";
 
 function ListBlock({ items }: { items: string[] }) {
   return (
@@ -39,15 +40,18 @@ export default function BlogContent({ content }: { content: BlogBlock[] }) {
             );
           case "code":
             return (
-              <EditTool
+              <Terminal
                 key={i}
-                variant="write"
-                state="completed"
-                filePath={block.language ? `snippet.${block.language}` : "code"}
-                newContent={block.text}
-                className="dark my-6 border-white/[0.06] bg-black"
-              />
+                title={block.language ? `snippet.${block.language}` : "code"}
+                className="my-6"
+              >
+                <pre className="text-[12px] font-mono leading-[1.5] overflow-x-auto text-neutral-300 whitespace-pre">
+                  {block.text}
+                </pre>
+              </Terminal>
             );
+          case "terminal":
+            return <TerminalDemo2 key={i} />;
           case "list":
             return <ListBlock key={i} items={block.items} />;
         }

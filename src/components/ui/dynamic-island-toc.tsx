@@ -3,8 +3,6 @@ import { motion, AnimatePresence, Transition } from "motion/react";
 import { X } from "lucide-react";
 import { cn } from "@/lib/utils";
 
-// --- Types ---
-
 type HeadingData = {
   id: string;
   text: string;
@@ -12,15 +10,11 @@ type HeadingData = {
   element: HTMLElement;
 };
 
-// --- Shared Animation Configs ---
-
 const islandTransition: Transition = {
   type: "tween",
   ease: [0.22, 1, 0.36, 1],
   duration: 0.5,
 };
-
-// --- Progress Circle Component ---
 
 function CircleProgress({ percentage }: { percentage: number }) {
   const size = 24;
@@ -49,14 +43,9 @@ function CircleProgress({ percentage }: { percentage: number }) {
   );
 }
 
-// --- Main Component ---
-
 type DynamicIslandTOCProps = {
   children?: ReactNode;
-  /**
-   * CSS selector to find headings.
-   * Defaults to common blog content wrappers and explicit [data-toc] elements.
-   */
+
   selector?: string;
 };
 
@@ -70,15 +59,14 @@ export function DynamicIslandTOC({
   const [isExpanded, setIsExpanded] = useState(false);
   const [progress, setProgress] = useState(0);
 
-  // 1. DOM Scanning Strategy
   useEffect(() => {
     const getHeadings = () => {
       const elements = Array.from(document.querySelectorAll(selector)) as HTMLElement[];
 
       const validHeadings = elements
-        .filter((el) => !el.hasAttribute("data-toc-ignore")) // Allow explicit skipping
+        .filter((el) => !el.hasAttribute("data-toc-ignore"))
         .map((el, index) => {
-          // Auto-generate ID if missing (common in generic Markdown/CMS output)
+
           if (!el.id) {
             const generatedId =
               el.textContent
@@ -88,9 +76,6 @@ export function DynamicIslandTOC({
             el.id = generatedId;
           }
 
-          // 1. Check data-toc-depth attribute
-          // 2. Fallback to standard HTML tag levels (H1 = 1, H2 = 2)
-          // 3. Default to level 2 if not a heading tag
           const depthAttr = el.getAttribute("data-toc-depth");
           let level = 2;
 
@@ -103,13 +88,11 @@ export function DynamicIslandTOC({
             }
           }
 
-          // Allow title overrides via data-toc-title
           const text = el.getAttribute("data-toc-title") || el.textContent || "Section";
 
           return { id: el.id, text, level, element: el };
         });
 
-      // Sort by DOM order mathematically
       validHeadings.sort((a, b) =>
         a.element.compareDocumentPosition(b.element) & Node.DOCUMENT_POSITION_FOLLOWING ? -1 : 1,
       );
@@ -117,18 +100,16 @@ export function DynamicIslandTOC({
       setHeadings(validHeadings);
     };
 
-    // Slight delay ensures CMS/Markdown hydration is complete
     const timer = setTimeout(getHeadings, 100);
     return () => clearTimeout(timer);
   }, [selector]);
 
-  // 2. Scroll Spy & Progress
   useEffect(() => {
     const handleScroll = () => {
       let currentActiveId: string | null = null;
       for (const heading of headings) {
         const top = heading.element.getBoundingClientRect().top;
-        // 120px offset to trigger active state just as heading reaches the top
+
         if (top <= 120) {
           currentActiveId = heading.id;
         } else {
@@ -154,7 +135,6 @@ export function DynamicIslandTOC({
 
   const activeHeading = headings.find((h) => h.id === activeId);
 
-  // Normalize depths so the highest-level heading in the doc touches the left edge
   const minLevel = useMemo(() => {
     if (headings.length === 0) return 1;
     return Math.min(...headings.map((h) => h.level));
@@ -164,7 +144,7 @@ export function DynamicIslandTOC({
     <>
       {children}
 
-      {/* Backdrop Blur Overlay */}
+      {}
       <AnimatePresence>
         {isExpanded && (
           <motion.div
@@ -178,7 +158,7 @@ export function DynamicIslandTOC({
         )}
       </AnimatePresence>
 
-      {/* Dynamic Island Wrapper */}
+      {}
       <motion.div
         initial={{ y: 50, opacity: 0 }}
         animate={{ y: 0, opacity: 1 }}
@@ -199,7 +179,7 @@ export function DynamicIslandTOC({
           style={{ cursor: isExpanded ? "default" : "pointer" }}
           className="relative overflow-hidden border border-foreground/10 bg-background text-foreground shadow-2xl"
         >
-          {/* CLOSED PILL CONTENT */}
+          {}
           <motion.div
             initial={false}
             animate={{
@@ -230,7 +210,7 @@ export function DynamicIslandTOC({
             <CircleProgress percentage={progress} />
           </motion.div>
 
-          {/* EXPANDED MENU CONTENT */}
+          {}
           <motion.div
             initial={false}
             animate={{
@@ -261,9 +241,8 @@ export function DynamicIslandTOC({
                   const isActive = activeId === h.id;
                   const isHovered = hoveredId === h.id;
 
-                  // Dynamically calculate padding based on nesting depth!
                   const indentLevel = Math.max(0, h.level - minLevel);
-                  const paddingLeft = indentLevel * 14 + 12; // 12px base + 14px per depth
+                  const paddingLeft = indentLevel * 14 + 12;
 
                   return (
                     <button
@@ -272,7 +251,7 @@ export function DynamicIslandTOC({
                       onMouseLeave={() => setHoveredId(null)}
                       onClick={(e) => {
                         e.stopPropagation();
-                        // Adjust scroll to give fixed headers breathing room
+
                         const yOffset = -80;
                         const y = h.element.getBoundingClientRect().top + window.scrollY + yOffset;
                         window.scrollTo({ top: y, behavior: "smooth" });

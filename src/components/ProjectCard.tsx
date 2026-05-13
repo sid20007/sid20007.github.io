@@ -4,7 +4,7 @@ import Link from "next/link";
 import { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import type { Project } from "@/data/projects";
-import { EditTool } from "@/components/ui/edit-tool";
+import { Terminal } from "@/registry/magicui/terminal";
 import { GridWipeModal } from "@/components/ui/grid-wipe-modal";
 import { techExplanations } from "@/data/tech-explanations";
 
@@ -23,22 +23,21 @@ export default function ProjectCard({
   const summarizeReadme = (text: string) => {
     const lines = text.split('\n');
     let overview = [];
-    
+
     for (const line of lines) {
-      // Stop at common technical headers
+
       if (line.match(/^##\s+(Installation|Getting Started|Usage|Setup|Development|License|Contributing)/i)) {
         overview.push("\n... [Visit GitHub for full details and instructions]");
         break;
       }
       overview.push(line);
-      
-      // Hard cap to keep the preview concise
+
       if (overview.length > 25) {
         overview.push("\n... [Visit GitHub for full details and instructions]");
         break;
       }
     }
-    
+
     return overview.join('\n');
   };
 
@@ -46,14 +45,14 @@ export default function ProjectCard({
     if (!showPreview && !readmeContent && project.github) {
       setShowPreview(true);
       setPreviewState("pending");
-      
+
       try {
         const repoPath = project.github.replace("https://github.com/", "");
         let res = await fetch(`https://raw.githubusercontent.com/${repoPath}/main/README.md`);
         if (!res.ok) {
           res = await fetch(`https://raw.githubusercontent.com/${repoPath}/master/README.md`);
         }
-        
+
         if (res.ok) {
           const text = await res.text();
           setReadmeContent(summarizeReadme(text));
@@ -82,7 +81,7 @@ export default function ProjectCard({
         className="group relative rounded-3xl border border-white/[0.06] bg-surface/60 backdrop-blur-md p-6 sm:p-8 flex flex-col justify-between overflow-hidden cursor-default transition-all duration-500 hover:border-white/[0.12] hover:bg-white/[0.03] hover:shadow-[0_8px_30px_rgba(0,0,0,0.4)]"
       >
         <div className="absolute inset-0 bg-gradient-to-br from-white/[0.04] via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
-        
+
         <div className="relative z-10 min-w-0 flex-1">
           <div className="flex items-center justify-between mb-4">
             <div className="flex items-center justify-center w-10 h-10 rounded-full bg-white/[0.04] border border-white/[0.06] group-hover:scale-110 transition-transform duration-500">
@@ -97,7 +96,7 @@ export default function ProjectCard({
           <p className="mt-3 text-sm text-[#a1a1aa] leading-relaxed line-clamp-3">
             {project.description}
           </p>
-          
+
           <div className="mt-6 flex flex-wrap items-center gap-2">
             {project.tags.map((tag) => {
               const hasExplanation = !!techExplanations[tag];
@@ -193,7 +192,7 @@ export default function ProjectCard({
                 <span className="text-[10px] font-mono tracking-widest text-[#71717a] uppercase">
                   {activeTag} — {techExplanations[activeTag].definition}
                 </span>
-                <button 
+                <button
                   onClick={(e) => {
                     e.stopPropagation();
                     setActiveTag(null);
@@ -218,13 +217,17 @@ export default function ProjectCard({
         onClose={() => setShowPreview(false)}
         title={`${project.title} - README`}
       >
-        <EditTool
-          state={previewState}
-          variant="write"
-          filePath="README.md"
-          newContent={readmeContent}
-          className="dark bg-transparent border-none shadow-none"
-        />
+        <Terminal title="README.md" className="bg-transparent border-none shadow-none">
+          {previewState === "pending" || previewState === "waiting" ? (
+            <div className="flex items-center gap-2 text-xs text-neutral-400 py-4">
+              <span>Loading README...</span>
+            </div>
+          ) : (
+            <pre className="text-[12px] font-mono leading-[1.5] overflow-x-auto text-neutral-300 whitespace-pre">
+              {readmeContent}
+            </pre>
+          )}
+        </Terminal>
       </GridWipeModal>
     </>
   );

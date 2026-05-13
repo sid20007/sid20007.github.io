@@ -13,7 +13,6 @@ import { projects } from "@/data/projects";
 import { techStack, categories } from "@/data/tech-stack";
 import { siteConfig } from "@/data/site";
 
-/* Dynamically import the WebGL effect — no SSR, and only load on client */
 const CanvasRevealEffect = dynamic(
   () =>
     import("@/components/ui/sign-in-flow-1").then(
@@ -25,7 +24,7 @@ const CanvasRevealEffect = dynamic(
 const featured = projects.filter((p) => p.featured);
 
 export default function Home() {
-  /* Detect low-power / mobile devices to skip heavy WebGL */
+
   const [showCanvas, setShowCanvas] = useState(false);
 
   useEffect(() => {
@@ -33,13 +32,13 @@ export default function Home() {
     const isLowPower =
       navigator.hardwareConcurrency !== undefined &&
       navigator.hardwareConcurrency <= 4;
-    // Show canvas on desktop or capable devices
+
     setShowCanvas(!isMobile || !isLowPower);
   }, []);
 
   return (
     <div className="relative">
-      {/* Dot matrix background — spans entire page */}
+      {}
       <div
         className="pointer-events-none fixed inset-0 -z-10 overflow-hidden"
         aria-hidden="true"
@@ -59,8 +58,7 @@ export default function Home() {
             ]}
           />
         ) : (
-          /*
-           CSS-only fallback for mobile lightweight static dots */
+
           <div
             className="absolute inset-0"
             style={{
@@ -81,11 +79,11 @@ export default function Home() {
             }}
           />
         )}
-        {/* Fade gradient at bottom */}
+        {}
         <div className="absolute bottom-0 left-0 right-0 h-1/3 bg-gradient-to-t from-[#0a0a0b] to-transparent" />
       </div>
 
-      {/* Hero */}
+      {}
       <section className="relative flex flex-col items-center justify-center pt-28 pb-20 sm:pt-36 sm:pb-28 w-full">
         <motion.div
           initial={{ opacity: 0, y: 20 }}
@@ -97,7 +95,7 @@ export default function Home() {
             Siddharth.
           </h1>
           <h2 className="text-lg sm:text-xl font-medium text-[#e4e4e7] mb-6 sm:mb-8 tracking-tight">
-            Full-Stack Engineer & UI Builder
+            Building random stuff
           </h2>
           <p className="max-w-xl text-base sm:text-[1.125rem] text-[#a1a1aa] leading-relaxed text-balance px-4">
             {siteConfig.description}
@@ -118,8 +116,7 @@ export default function Home() {
         </motion.div>
       </section>
 
-
-      {/* Featured Projects */}
+      {}
       <AnimatedSection
         delay={0.1}
         className="py-20 sm:py-24 mx-auto max-w-6xl px-6 sm:px-8 lg:px-12"
@@ -136,7 +133,7 @@ export default function Home() {
         </div>
       </AnimatedSection>
 
-      {/* Tech Stack */}
+      {}
       <AnimatedSection
         delay={0.1}
         className="py-20 sm:py-24 mx-auto max-w-6xl px-6 sm:px-8 lg:px-12"
@@ -170,7 +167,7 @@ export default function Home() {
         </div>
       </AnimatedSection>
 
-      {/* CTA */}
+      {}
       <AnimatedSection
         delay={0.1}
         className="py-20 sm:py-24 mx-auto max-w-6xl px-6 sm:px-8 lg:px-12"

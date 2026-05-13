@@ -12,9 +12,359 @@ export type BlogBlock =
   | { type: "heading"; text: string }
   | { type: "paragraph"; text: string }
   | { type: "code"; text: string; language?: string }
+  | { type: "terminal" }
   | { type: "list"; items: string[] };
 
 export const blogPosts: BlogPost[] = [
+  {
+    slug: "scraping-the-college-portal",
+    title: "Scraping the College Portal: An Engineering Case Study in Real-World Automation, UX, and Cloudflare Blocks",
+    description: "A developer's journey of building a privacy-first, real-time attendance tracker on top of a legacy university portal, fighting headless browser detection, and designing for the anxious student.",
+    date: "2026-05-12",
+    readTime: "12 min read",
+    tags: ["Next.js", "Playwright", "Web Scraping", "JavaScript"],
+    content: [
+      {
+        type: "paragraph",
+        text: `If you're an engineering student in India, the number 75 is basically a permanent background process running in your brain. It's the arbitrary, unforgiving line between academic survival and getting barred from writing your semester exams. Drop to 74.9%, and you're suddenly pleading with the department head or begging for medical certificates.`
+      },
+      {
+        type: "paragraph",
+        text: `At St. Aloysius College (SOE), our official source of truth for this metric is a portal called btechconnect.staloysius.edu.in. To be fair to the developers who built it, the database is accurate. But using the actual portal feels like loading a webpage in 2012 over a dial-up connection. It has zero mobile optimization, crashes when everyone tries to log in before exams, and forces you to re-type your credentials literally every single time you open the tab.`
+      },
+      {
+        type: "paragraph",
+        text: `But the real issue isn't the styling; it's the lack of empathy in how the data is presented. When you finally get the page to load, you are greeted with a dry, static HTML table that looks something like this:`
+      },
+      {
+        type: "list",
+        items: [
+          "Engineering Chemistry: 32 conducted, 25 attended (78.1%)"
+        ]
+      },
+      {
+        type: "paragraph",
+        text: `That raw percentage doesn't actually tell you what you need to know in the moment. As a student, your internal monologue is usually a series of highly anxious, algebra-heavy questions:`
+      },
+      {
+        type: "list",
+        items: [
+          "\"I have a fever today. Can I skip this morning's double-slot lab without dropping below 75%?\"",
+          "\"I'm currently at 68%. Exactly how many consecutive classes do I have to attend to get back to safety?\"",
+          "\"There are only three weeks left in the semester. If I attend every single class from now on, is it mathematically possible for me to clear the bar, or am I already cooked?\""
+        ]
+      },
+      {
+        type: "paragraph",
+        text: `To answer these, we were constantly whipping out our phone calculators or scribbling algebra on the back of notebooks. It was an inefficient, stressful ritual. I decided to build a solution: B.Tech Connect — Attendance Tracker. A clean, modern, privacy-first web application that scrapes the legacy portal in the background and translates raw tables into actionable, real-time math, wrapped in a premium dark-mode dashboard.`
+      },
+      {
+        type: "heading",
+        text: "Designing for clarity"
+      },
+      {
+        type: "paragraph",
+        text: `From day one, I knew I didn't want to build a simple wrapper that just re-formatted the portal's layout. I wanted to build a proactive, intelligent dashboard that understands student anxiety.`
+      },
+      {
+        type: "list",
+        items: [
+          "No annoying sign-ups: I refused to build another \"Sign Up with Email\" flow. Students hate filling out forms. It had to be: type your portal ID, hit enter, and see your dashboard. Simple.",
+          "Absolute privacy: Storing university passwords on a database is a security nightmare. If my database ever leaked, I'd be in serious trouble, and rightfully so. The credentials had to be used on-the-fly to negotiate a session, then immediately discarded.",
+          "The \"Can I Bunk?\" Math: The app had to answer two primary questions for every subject: \"Can Skip\" (safe-to-bunk classes) and \"Must Attend\" (catch-up classes).",
+          "Timetable Context: WhatsApp is filled with outdated PDF timetables. The dashboard should automatically know what classes are scheduled today and highlight them."
+        ]
+      },
+      {
+        type: "paragraph",
+        text: `I wanted the user experience to feel snappy, responsive, and \"alive.\" Instead of a static spreadsheet, it had to feel like a premium financial dashboard—think Robinhood, but for tracking your academic credit.`
+      },
+      {
+        type: "heading",
+        text: "Architecture & tech stack"
+      },
+      {
+        type: "paragraph",
+        text: `I wanted to build this fast before the semester got too busy, so I kept the stack as lean as possible. No separate backend servers, no complex databases to manage. Just a single Next.js project.`
+      },
+      {
+        type: "terminal"
+      },
+      {
+        type: "heading",
+        text: "Next.js 16 (App Router)"
+      },
+      {
+        type: "paragraph",
+        text: `I chose Next.js because it's a fantastic full-stack framework. The App Router allowed me to keep my frontend code and scraper logic colocated in a single project. The API routes serve as our backend, letting us spin up serverless functions (or standard Node environments) to run our automation logic without deploying a separate Express or FastAPI server.`
+      },
+      {
+        type: "heading",
+        text: "Why standard JavaScript for the scraper?"
+      },
+      {
+        type: "paragraph",
+        text: `I write a lot of TypeScript, but for the scraping layer, TS felt like a chore. The student portal changes its HTML structure randomly. When a selector breaks, I want to edit a JS file, hot-reload, and see the fix in milliseconds. Writing type definitions for messy HTML tables and casting every DOM node just slowed down my trial-and-error loop.`
+      },
+      {
+        type: "heading",
+        text: "Backend Structure & Auth: Moving Away from Insecure Patterns"
+      },
+      {
+        type: "paragraph",
+        text: `In early prototypes, developers often make the mistake of storing credentials or active portal session cookies in the browser's sessionStorage or localStorage. This is a massive security risk (susceptible to XSS attacks).`
+      },
+      {
+        type: "paragraph",
+        text: `To solve this, I designed a server-side session handler using the jose library for secure, encrypted JWT cookies:`
+      },
+      {
+        type: "list",
+        items: [
+          "When a student enters their credentials on our login page, a POST request is sent to /api/attendance.",
+          "The server spins up a Playwright headless instance, logs into btechconnect, and retrieves the authenticated session cookies.",
+          "Instead of sending these raw cookies back to the client, the server packages them inside an encrypted JWT, signs it using a server-side SESSION_SECRET, and sets it as an HttpOnly, Secure, SameSite: Lax cookie named attendance_session.",
+          "On subsequent requests, the client's browser automatically sends this cookie. The Next.js API decrypts it, extracts the target portal's session cookies, and directly calls the portal's APIs to fetch fresh data—completely bypassing the slow browser login flow."
+        ]
+      },
+      {
+        type: "heading",
+        text: "Zero-Config Branch Derivation"
+      },
+      {
+        type: "paragraph",
+        text: `To keep onboarding down to a single click, I didn't want to ask users "What is your branch?". I dug into our university's registration patterns and wrote a utility in route.js to auto-derive their branch based on their register number ranges:`
+      },
+      {
+        type: "code",
+        text: `function deriveBranch(register_no) {
+  const regNumber = parseInt(register_no, 10);
+  if (isNaN(regNumber)) return "UNKNOWN";
+  if (regNumber >= 25190101 && regNumber <= 25190157) return "CSE";
+  if (regNumber >= 25191101 && regNumber <= 25191160) return "AIML";
+  if (regNumber >= 25192101 && regNumber <= 25192151) return "ISE";
+  if (regNumber >= 25195101 && regNumber <= 25195141) return "ECE";
+  return "UNKNOWN";
+}`,
+        language: "javascript"
+      },
+      {
+        type: "paragraph",
+        text: `This single piece of logic automatically hooks the user into the correct branch timetable on their first login!`
+      },
+      {
+        type: "heading",
+        text: "Fighting Cloudflare"
+      },
+      {
+        type: "paragraph",
+        text: `Everything was running beautifully on my local machine. Then, around April 2025, the college portal team implemented Cloudflare Turnstile. Suddenly, my serverless deployments on Vercel started returning 403 Forbidden errors. My automated scraper was hitting a brick wall.`
+      },
+      {
+        type: "paragraph",
+        text: `This kicked off a two-week spiral of debugging. Locally, Playwright worked because it launched a real Chrome window on a residential IP. In the cloud, headless Chromium on an AWS or Vercel IP range is basically a giant flag waving "I AM A BOT" to Cloudflare.`
+      },
+      {
+        type: "paragraph",
+        text: `I spent weeks researching stealth automated browsers. In scraper.js, I implemented Playwright Stealth Plugins to override default automation flags, disabled AutomationControlled, and overrode navigator.webdriver:`
+      },
+      {
+        type: "code",
+        text: `await page.addInitScript(() => {
+  Object.defineProperty(navigator, 'webdriver', { get: () => undefined });
+});`,
+        language: "javascript"
+      },
+      {
+        type: "paragraph",
+        text: `I also set realistic viewport dimensions, mimicked an en-US locale, set the timezone to Asia/Kolkata, used a common Windows user-agent, and added randomized delays (using Math.random()) to mimic human typing speeds when filling out the login form.`
+      },
+      {
+        type: "paragraph",
+        text: `Despite these efforts, cloud provider IP ranges (AWS, DigitalOcean, Vercel) are heavily blacklisted by Cloudflare. Running headless Chromium from these IPs was reliably fingerprinted and challenged.`
+      },
+      {
+        type: "paragraph",
+        text: `To solve this without paying for expensive residential proxy networks, I preserved the project as a fully functional local development application (which works beautifully on any domestic Wi-Fi connection) and archived the production cloud deployment. This was an invaluable lesson in the limitations of scraping as a backend strategy—at a certain scale, security walls require official APIs or user-cooperative scrapers (like browser extensions).`
+      },
+      {
+        type: "heading",
+        text: "Handling inconsistent edge cases"
+      },
+      {
+        type: "paragraph",
+        text: `Writing the attendance calculations seemed trivial at first, but edge cases quickly emerged. Solving the algebra for "Must Attend" classes was surprisingly tricky when dealing with discrete values.`
+      },
+      {
+        type: "paragraph",
+        text: `Let's say your target is 75% (T = 0.75). You've attended A classes out of N conducted. You want to find the number of consecutive classes x you must attend to satisfy: (A + x) / (N + x) >= T.`
+      },
+      {
+        type: "paragraph",
+        text: `Solving for x: A + x >= T(N + x) which simplifies to: x(1 - T) >= T * N - A. Thus: x >= (T * N - A) / (1 - T). Since classes are discrete integers, we take the ceiling: x = Math.ceil((T * N - A) / (1 - T)).`
+      },
+      {
+        type: "paragraph",
+        text: `But when I first implemented this, my console started throwing weird NaN and Infinity values. Why? If a student has 0 classes conducted so far (like in the first week of a semester), N is 0, and the formula breaks with division by zero or negative values. What if the max possible attendance they can achieve by the end of the semester is mathematically lower than 75%?`
+      },
+      {
+        type: "paragraph",
+        text: `In SubjectCard, I resolved these edge cases with rigorous safety guards:`
+      },
+      {
+        type: "code",
+        text: `const catchUpClasses = Math.ceil((targetDecimal * total - attended) / (1 - targetDecimal));
+const safeToBunk = Math.floor((attended - (targetDecimal * total)) / targetDecimal);
+
+const displaySafeToBunk = Math.max(0, safeToBunk);
+const displayCatchUp = Math.max(0, catchUpClasses);`,
+        language: "javascript"
+      },
+      {
+        type: "paragraph",
+        text: `If a student's maximum possible percentage (assuming they attend every remaining class until the last working day) drops below their target, the UI shifts to render a custom warning:`
+      },
+      {
+        type: "code",
+        text: `const exactRemaining = calculateExactRemaining(code, branch, endDate);
+const projectedTotal = total + exactRemaining;
+const maxPossiblePercent = ((attended + exactRemaining) / projectedTotal) * 100;`,
+        language: "javascript"
+      },
+      {
+        type: "paragraph",
+        text: `Instead of displaying a confusing negative "Must Attend" number, the card displays a warning banner: "You're Cooked!" with the exact number of extra classes needed beyond the remaining schedule, preventing mathematical drift.`
+      },
+      {
+        type: "heading",
+        text: "UI/UX Design Thinking: Designing for Calm"
+      },
+      {
+        type: "paragraph",
+        text: `Student dashboards are usually ugly, cluttered spreadsheets that scream "You are failing!" at you. Because attendance tracking is linked to anxiety, I wanted the UI/UX of this app to feel calm, focused, and premium.`
+      },
+      {
+        type: "list",
+        items: [
+          "Password Anxiety: Explicit subtext on login: \"We never store your password\" — Establishes immediate trust and transparency.",
+          "Cluttered Timetables: \"Today's Hitlist\" Section — Filters the master timetable down to show only classes scheduled for the current day, showing a clean timeline.",
+          "Visual Stress: Harmonious Dark Palette (#09090b and #18181b) with soft glassmorphism — Reduces eye strain during late-night scrolling.",
+          "Mathematical Friction: Isolated \"Can Skip\" and \"Must Attend\" giant metrics — Gives the student their core answers within 500ms of looking at the page."
+        ]
+      },
+      {
+        type: "heading",
+        text: "Dynamic Global Health Indicator"
+      },
+      {
+        type: "paragraph",
+        text: `To provide an instant overview, I wanted to avoid making the student read every single subject card to understand their standing. I built a Global Health Indicator using the student's profile photo:`
+      },
+      {
+        type: "code",
+        text: `let profileRingColor = 'border-[#D9A02A]/30';
+let profileGlow = 'shadow-[0_0_15px_rgba(217,160,42,0.15)]';
+
+if (subjects && subjects.length > 0) {
+  const lowestPercent = subjects.reduce((min, s) => {
+    const percent = (s.attended / s.total) * 100;
+    return percent < min ? percent : min;
+  }, 100);
+
+  if (lowestPercent < 73) {
+    profileRingColor = 'border-[#FF453A]/80';
+    profileGlow = 'shadow-[0_0_20px_rgba(255,69,58,0.4)]';
+  } else if (lowestPercent >= 73 && lowestPercent < 75) {
+    profileRingColor = 'border-[#FFD60A]/80';
+  } else {
+    profileRingColor = 'border-emerald-500/80';
+  }
+}`,
+        language: "javascript"
+      },
+      {
+        type: "paragraph",
+        text: `The profile picture's outer ring and ambient glow dynamically transition between green, yellow, and red based on the student's lowest subject percentage. It instantly signals whether they are fully safe, on the edge, or in danger.`
+      },
+      {
+        type: "heading",
+        text: "User Autonomy: Personalizing the Dashboard"
+      },
+      {
+        type: "paragraph",
+        text: `The official college database often imports names in rigid, all-caps strings or as raw register numbers. To make the dashboard feel personal, I added a feature that lets students simply click on their name in the header to edit it. This value is saved directly to their browser's localStorage and persists across sessions, giving them ownership of their dashboard.`
+      },
+      {
+        type: "heading",
+        text: "Performance & Optimization: Perceived Speed"
+      },
+      {
+        type: "paragraph",
+        text: `Scraping is slow. Logging into the student portal via Playwright takes anywhere from 4 to 8 seconds because of server lag on their end. To ensure this didn't ruin the user experience, I engineered several layers of optimization:`
+      },
+      {
+        type: "list",
+        items: [
+          "Cookie Session Cache: Once a session cookie is obtained, we reuse it for up to 24 hours. The app checks if a valid session exists on mount; if it does, it directly fetches the data using rapid fetch() JSON requests, bringing page load speeds down to under 1.5 seconds.",
+          "Optimistic UI and Bouncing Loaders: While a fresh login scraper runs, instead of showing a blank screen or a harsh spinner, we render a highly polished pulsing skeleton loader that mimics the final card layout, reducing the user's perceived wait time.",
+          "Smart Re-validation Guard: When switching semesters, the application checks if the cached attendance data matches the requested semester. If it does, it skips the expensive backend API call entirely and renders instantly, preventing unnecessary load on our scraper server and the college portal."
+        ]
+      },
+      {
+        type: "heading",
+        text: "What I Learned: Engineering Beyond the Code"
+      },
+      {
+        type: "list",
+        items: [
+          "Security & Privacy are Non-Negotiable: When you build a tool that asks for college credentials, students will rightly hesitate. Securing the transport layer with HTTPS and using HttpOnly JWT cookies taught me how to architect secure sessions from the ground up.",
+          "The \"Uncooperative Backend\" Dilemma: In personal projects, we usually write our own APIs. Working with a legacy, slow, third-party backend taught me how to write robust error handling. I had to build screenshots-on-fail and HTML logging to debug exactly why our scraper failed in serverless environments.",
+          "Product Empathy: I realized that good software doesn't just calculate numbers; it manages emotion. Designing the \"Can Skip\" metric gave students immediate relief, while the \"You're Cooked\" warning gave them a realistic, albeit tough, reality check to take action."
+        ]
+      },
+      {
+        type: "heading",
+        text: "Future Improvements: The Next Semester"
+      },
+      {
+        type: "paragraph",
+        text: `If I were to rebuild this project or scale it further, there are several key architectural changes I would explore:`
+      },
+      {
+        type: "list",
+        items: [
+          "1. User-Cooperative Scraping (Chrome Extension): Instead of running Playwright on a cloud server (which is expensive and highly vulnerable to IP-based Cloudflare blocking), I would build a companion Chrome/Firefox Extension. The extension would scrape the data directly from the user's local machine (where they easily pass Cloudflare checks) and sync it to their local dashboard.",
+          "2. Predictive Timetable Analytics: Integrating the historical timetable trends to predict the likelihood of surprise classes or holiday cancellations, giving students even more accurate \"Can Skip\" projections.",
+          "3. Push Notifications: Alerting students when their attendance in a specific subject falls below 76%, acting as an early-warning system.",
+          "4. PWA Integration: Adding full offline support via service workers so students can check their schedule and cached attendance when walking through the college's low-connectivity basement labs."
+        ]
+      },
+      {
+        type: "heading",
+        text: "Final Reflection: Solving Your Own Problems"
+      },
+      {
+        type: "paragraph",
+        text: `Ultimately, this project represents the reason I got into software engineering.`
+      },
+      {
+        type: "paragraph",
+        text: `There is a unique thrill in looking at a clunky, frustrating daily process, sitting down with a text editor, and building a tool that makes life easier for yourself and your peers. Even though our cloud deployment is paused due to the ever-escalating bot-detection wars of the modern web, the engineering journey—from solving mathematical ceiling edge cases to wrapping Playwright inside containerized Docker builds—has been incredibly rewarding.`
+      },
+      {
+        type: "paragraph",
+        text: `It proved that with some reverse engineering, clean design, and focus, we can turn even the most boring, anxiety-inducing college spreadsheets into a premium, empowering user experience.`
+      },
+      {
+        type: "paragraph",
+        text: `Written by Sid, an ISE Student at St. Aloysius College (SOE).`
+      },
+      {
+        type: "paragraph",
+        text: `Find the repository on GitHub (https://github.com/sid20007).`
+      }
+    ]
+  },
   {
     slug: "building-a-dht-in-go",
     title: "Building a Distributed Hash Table in Go",
@@ -42,7 +392,7 @@ export const blogPosts: BlogPost[] = [
       },
       {
         type: "code",
-        text: `// Finger table entry points to successor at distance 2^i
+        text: `
 type FingerEntry struct {
     Start uint64
     Node  *Node
@@ -258,7 +608,7 @@ END $$;`,
       },
       {
         type: "code",
-        text: `// A simple Grow-Only Counter
+        text: `
 class GCounter {
   private counts: Map<string, number> = new Map();
 
@@ -304,7 +654,7 @@ interface Char {
   id: CharId;
   value: string;
   deleted: boolean;
-  // Links to left/right neighbors form a linked list
+
   leftId: CharId | null;
   rightId: CharId | null;
 }
@@ -328,7 +678,6 @@ class RGAText {
     }
   }
 
-  // Returns the string representation by walking the linked list
   toString(): string {
     const result: string[] = [];
     let current = this.findStart();
@@ -421,21 +770,20 @@ struct Grid {
       },
       {
         type: "code",
-        text: `// Instance data for each grid cell — uploaded as a GPU buffer
+        text: `
 #[repr(C)]
 struct CellInstance {
-    position: [f32; 2],      // screen position
-    tex_coords: [f32; 4],    // atlas rectangle
-    fg_color: [f32; 4],      // foreground color
-    bg_color: [f32; 4],      // background color
-    flags: u32,              // bold, italic, underline bits
+    position: [f32; 2],
+    tex_coords: [f32; 4],
+    fg_color: [f32; 4],
+    bg_color: [f32; 4],
+    flags: u32,
 }
 
-// Single draw call renders all visible cells
 render_pass.draw_indexed(
-    0..6,                    // quad indices
-    0,                       // base vertex
-    0..visible_cells as u32, // instance range
+    0..6,
+    0,
+    0..visible_cells as u32,
 );`,
         language: "rust",
       },
@@ -494,23 +842,23 @@ render_pass.draw_indexed(
       },
       {
         type: "code",
-        text: `// eBPF program that counts TCP connections by destination port
+        text: `
 #include <linux/bpf.h>
 #include <bpf/bpf_helpers.h>
 
 struct {
     __uint(type, BPF_MAP_TYPE_HASH);
     __uint(max_entries, 1024);
-    __type(key, u16);       // destination port
-    __type(value, u64);     // count
+    __type(key, u16);
+    __type(value, u64);
 } tcp_conn_count SEC(".maps");
 
 SEC("kprobe/tcp_v4_connect")
 int trace_tcp_connect(struct pt_regs *ctx) {
-    // The sock pointer is the first argument
+
     struct sock *sk = (struct sock *)PT_REGS_PARM1(ctx);
     u16 dport = sk->__sk_common.skc_dport;
-    dport = __builtin_bswap16(dport);  // network to host byte order
+    dport = __builtin_bswap16(dport);
 
     u64 *count = bpf_map_lookup_elem(&tcp_conn_count, &dport);
     if (count) {

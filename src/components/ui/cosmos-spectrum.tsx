@@ -41,7 +41,7 @@ export function CosmicSpectrum({ color = "original", blur = false }: CosmicSpect
   useEffect(() => {
     const loadScript = (src: string) => {
       return new Promise((resolve, reject) => {
-        // Don't reload if already present
+
         if (document.querySelector(`script[src="${src}"]`)) {
           resolve(true)
           return
@@ -75,7 +75,7 @@ export function CosmicSpectrum({ color = "original", blur = false }: CosmicSpect
     initializeAnimations()
   }, [])
 
-  const setupAnimations = () => {
+  function setupAnimations() {
     const gsap = window.gsap
     const ScrollTrigger = window.ScrollTrigger
 
@@ -113,10 +113,10 @@ export function CosmicSpectrum({ color = "original", blur = false }: CosmicSpect
 
   return (
     <div ref={containerRef}>
-      {/* Scroll trigger zone */}
+      {}
       <div className="cosmic-animation-section h-0 relative" />
 
-      {/* Fixed SVG bars at bottom */}
+      {}
       <div className="fixed bottom-0 left-0 right-0 h-screen pointer-events-none z-0">
         <div
           className="cosmic-svg-container absolute bottom-0 left-0 right-0 h-screen opacity-0"

@@ -4,20 +4,23 @@ import { useEffect, useState } from "react";
 import { motion, useMotionValue, useSpring } from "framer-motion";
 
 export default function CustomCursor() {
+  const [mounted, setMounted] = useState(false);
+  const [isTouchDevice, setIsTouchDevice] = useState(false);
   const [isVisible, setIsVisible] = useState(false);
   const [isHovering, setIsHovering] = useState(false);
 
   const cursorX = useMotionValue(-100);
   const cursorY = useMotionValue(-100);
 
-  // Smooth out the trailing ring
   const springConfig = { damping: 25, stiffness: 400, mass: 0.5 };
   const cursorXSpring = useSpring(cursorX, springConfig);
   const cursorYSpring = useSpring(cursorY, springConfig);
 
   useEffect(() => {
-    // Disable on touch devices
-    if (window.matchMedia("(pointer: coarse)").matches) return;
+    setMounted(true);
+    const isTouch = window.matchMedia("(pointer: coarse)").matches;
+    setIsTouchDevice(isTouch);
+    if (isTouch) return;
 
     const moveCursor = (e: MouseEvent) => {
       cursorX.set(e.clientX);
@@ -27,7 +30,7 @@ export default function CustomCursor() {
 
     const handleMouseOver = (e: MouseEvent) => {
       const target = e.target as HTMLElement;
-      // Detect interactable elements
+
       if (
         window.getComputedStyle(target).cursor === "pointer" ||
         target.closest("a") ||
@@ -56,14 +59,11 @@ export default function CustomCursor() {
     };
   }, [cursorX, cursorY, isVisible]);
 
-  // Prevent hydration mismatch by avoiding rendering on server
-  if (typeof window === "undefined") return null;
-  // Fallback for touch devices
-  if (window.matchMedia("(pointer: coarse)").matches) return null;
+  if (!mounted || isTouchDevice) return null;
 
   return (
     <>
-      {/* Precision Dot */}
+      {}
       <motion.div
         className="fixed top-0 left-0 w-1.5 h-1.5 bg-white rounded-full pointer-events-none z-[10000] mix-blend-difference hidden sm:block shadow-[0_0_10px_rgba(255,255,255,0.8)]"
         style={{
@@ -77,7 +77,7 @@ export default function CustomCursor() {
         transition={{ scale: { duration: 0.2 } }}
       />
 
-      {/* Trailing Glassmorphic Ring */}
+      {}
       <motion.div
         className="fixed top-0 left-0 w-8 h-8 border border-white/20 bg-white/5 backdrop-blur-[2px] rounded-full pointer-events-none z-[9999] hidden sm:block"
         style={{

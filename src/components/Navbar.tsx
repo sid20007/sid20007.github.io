@@ -37,7 +37,7 @@ export default function Navbar() {
           </AnimatePresence>
         </Link>
 
-        {/* Sliding cursor nav — desktop & mobile */}
+        {}
         <NavHeader links={navLinks} />
       </nav>
     </header>

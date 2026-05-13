@@ -7,7 +7,7 @@ import { motion } from "framer-motion";
 export default function ProjectsPage() {
   return (
     <div className="relative min-h-screen">
-      {/* Stars background — spans the entire page */}
+      {}
       <div
         className="pointer-events-none fixed inset-0 z-0"
         aria-hidden="true"
@@ -39,7 +39,7 @@ export default function ProjectsPage() {
         }}
       />
 
-      {/* Twinkling overlay layer */}
+      {}
       <div
         className="pointer-events-none fixed -inset-10 z-0 stars-twinkle scale-110"
         aria-hidden="true"
@@ -69,13 +69,13 @@ export default function ProjectsPage() {
         }}
       />
 
-      {/* Hero section */}
+      {}
       <section className="relative z-10 flex flex-col items-center justify-center text-center pt-28 pb-16 sm:pt-36 sm:pb-20">
-        {/* Corner accents */}
+        {}
         <div className="absolute top-0 left-0 w-6 h-6 lg:w-10 lg:h-10 border-t border-l border-white/15" />
         <div className="absolute top-0 right-0 w-6 h-6 lg:w-10 lg:h-10 border-t border-r border-white/15" />
 
-        {/* Top decorative line */}
+        {}
         <motion.div
           initial={{ opacity: 0, scaleX: 0 }}
           animate={{ opacity: 0.5, scaleX: 1 }}
@@ -89,7 +89,7 @@ export default function ProjectsPage() {
           <div className="w-12 h-px bg-white/40" />
         </motion.div>
 
-        {/* Title */}
+        {}
         <motion.h1
           initial={{ opacity: 0, y: 16 }}
           animate={{ opacity: 1, y: 0 }}
@@ -103,7 +103,7 @@ export default function ProjectsPage() {
           Building in the open.
         </motion.h1>
 
-        {/* Description */}
+        {}
         <motion.p
           initial={{ opacity: 0, y: 12 }}
           animate={{ opacity: 1, y: 0 }}
@@ -118,7 +118,7 @@ export default function ProjectsPage() {
           is a step forward.
         </motion.p>
 
-        {/* Dot pattern */}
+        {}
         <motion.div
           initial={{ opacity: 0 }}
           animate={{ opacity: 0.3 }}
@@ -130,7 +130,7 @@ export default function ProjectsPage() {
           ))}
         </motion.div>
 
-        {/* Bottom notation */}
+        {}
         <motion.div
           initial={{ opacity: 0 }}
           animate={{ opacity: 0.3 }}
@@ -143,7 +143,7 @@ export default function ProjectsPage() {
         </motion.div>
       </section>
 
-      {/* Project cards */}
+      {}
       <motion.div
         initial={{ opacity: 0, y: 16 }}
         animate={{ opacity: 1, y: 0 }}
@@ -155,7 +155,7 @@ export default function ProjectsPage() {
         ))}
       </motion.div>
 
-      {/* Bottom corner accents */}
+      {}
       <div className="absolute bottom-0 left-0 w-6 h-6 lg:w-10 lg:h-10 border-b border-l border-white/15 z-10" />
       <div className="absolute bottom-0 right-0 w-6 h-6 lg:w-10 lg:h-10 border-b border-r border-white/15 z-10" />
     </div>
